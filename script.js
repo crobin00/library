@@ -1,3 +1,5 @@
+const background = document.querySelector("body");
+const titleContainer = document.querySelector(".title-container");
 const newBookButton = document.querySelector(".new-button");
 const newBookContainer = document.querySelector(".new-book-container");
 const bookContainer = document.querySelector(".book-container");
@@ -9,6 +11,13 @@ const addBookHasRead = document.getElementById("hasRead");
 let bookArray = [];
 newBookButton.addEventListener("click", newBook);
 addBookButton.addEventListener("click", addBook);
+let bookArrayPos = -1;
+const removeBookButton = document.querySelectorAll(".remove-button");
+document.body.addEventListener("click", function (e) {
+	if (e.target.classList.contains("remove-button")) {
+		removeBook(e.target.getAttribute("data-key"));
+	}
+});
 
 function Book(title, author, pages, hasRead) {
 	this.title = title;
@@ -24,8 +33,21 @@ function Book(title, author, pages, hasRead) {
 
 function addBookToLibrary() {}
 
+function removeBook(index) {
+	bookContainer.querySelector(`[data-key="${index}"]`).remove();
+	bookArray.splice(index);
+}
+
 function newBook() {
-	//newBookContainer.classList.remove("hidden");
+	titleContainer.classList.add("hidden-background");
+	bookContainer.classList.add("hidden-background");
+	newBookContainer.classList.remove("hidden-book");
+}
+
+function clickedAddBookButton() {
+	titleContainer.classList.remove("hidden-background");
+	bookContainer.classList.remove("hidden-background");
+	newBookContainer.classList.add("hidden-book");
 }
 
 function addBook() {
@@ -49,6 +71,8 @@ function addBook() {
 			newBook.hasRead
 		)
 	);
+
+	clickedAddBookButton();
 }
 
 function appendBookToContainer(title, author, pages, hasRead) {
@@ -59,22 +83,28 @@ function appendBookToContainer(title, author, pages, hasRead) {
 	let bookHasRead = document.createElement("input");
 	let bookHasReadH3 = document.createElement("h3");
 	let hasReadContainer = document.createElement("div");
+	let removeButton = document.createElement("button");
 
 	bookHasRead.type = "checkbox";
 	bookHasRead.name = "read";
 	bookHasRead.value = "read";
 	bookHasRead.id = "read";
 
+	removeButton.innerText = "Remove";
 	bookTitle.innerText = title;
 	bookAuthor.innerText = author;
 	bookPages.innerText = "Pages: " + pages;
 	bookHasReadH3.innerText = "Read?";
 	bookHasRead.checked = hasRead;
-	hasReadContainer.append(bookHasReadH3, bookHasRead);
+	hasReadContainer.append(bookHasReadH3, bookHasRead, removeButton);
 	hasReadContainer.classList.add("read-container");
 
 	bookDiv.append(bookTitle, bookAuthor, bookPages, hasReadContainer);
 	bookDiv.classList.add("book");
+	bookArrayPos++;
+	removeButton.classList.add("remove-button");
+	removeButton.setAttribute("data-key", bookArrayPos);
+	bookDiv.setAttribute("data-key", bookArrayPos);
 	return bookDiv;
 }
 
