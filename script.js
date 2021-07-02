@@ -1,4 +1,5 @@
 const background = document.querySelector("body");
+const hideNewBook = document.querySelector(".bg");
 const newBookButton = document.querySelector(".add-book-button");
 const newBookContainer = document.querySelector(".new-book-container");
 const bookContainer = document.querySelector(".book-container");
@@ -18,6 +19,13 @@ document.body.addEventListener("click", function (e) {
 		removeBook(e.target.getAttribute("data-key"));
 	}
 });
+
+hideNewBook.addEventListener("click", closeMenu);
+function closeMenu() {
+	newBookButton.classList.remove("hidden-background");
+	bookContainer.classList.remove("hidden-background");
+	newBookContainer.classList.add("hidden-book");
+}
 
 const readBook = document.querySelectorAll(".read");
 document.body.addEventListener("click", function (e) {
