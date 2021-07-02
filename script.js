@@ -1,9 +1,8 @@
 const background = document.querySelector("body");
-const titleContainer = document.querySelector(".title-container");
-const newBookButton = document.querySelector(".new-button");
+const newBookButton = document.querySelector(".add-book-button");
 const newBookContainer = document.querySelector(".new-book-container");
 const bookContainer = document.querySelector(".book-container");
-const addBookButton = document.querySelector(".add-book-button");
+const addBookButton = document.querySelector(".new-book-add-button");
 const addBookTitle = document.getElementById("book-title");
 const addBookAuthor = document.getElementById("author");
 const addBookPages = document.getElementById("pages");
@@ -12,10 +11,18 @@ let bookArray = [];
 newBookButton.addEventListener("click", newBook);
 addBookButton.addEventListener("click", addBook);
 let bookArrayPos = -1;
-const removeBookButton = document.querySelectorAll(".remove-button");
+
+const removeBookButton = document.querySelectorAll(".remove");
 document.body.addEventListener("click", function (e) {
-	if (e.target.classList.contains("remove-button")) {
+	if (e.target.classList.contains("remove")) {
 		removeBook(e.target.getAttribute("data-key"));
+	}
+});
+
+const readBook = document.querySelectorAll(".read");
+document.body.addEventListener("click", function (e) {
+	if (e.target.classList.contains("read")) {
+		swapReadStatus(e.target.getAttribute("data-read"));
 	}
 });
 
@@ -31,7 +38,20 @@ function Book(title, author, pages, hasRead) {
 	};
 }
 
-function addBookToLibrary() {}
+function swapReadStatus(index) {
+	if (
+		bookContainer.querySelector(`[data-read="${index}"]`).innerText ==
+		"Read"
+	) {
+		//bookArray[index].hasRead = false;
+		bookContainer.querySelector(`[data-read="${index}"]`).innerText =
+			"Not Read";
+	} else {
+		//bookArray[index].hasRead = true;
+		bookContainer.querySelector(`[data-read="${index}"]`).innerText =
+			"Read";
+	}
+}
 
 function removeBook(index) {
 	bookContainer.querySelector(`[data-key="${index}"]`).remove();
@@ -39,13 +59,13 @@ function removeBook(index) {
 }
 
 function newBook() {
-	titleContainer.classList.add("hidden-background");
+	newBookButton.classList.add("hidden-background");
 	bookContainer.classList.add("hidden-background");
 	newBookContainer.classList.remove("hidden-book");
 }
 
 function clickedAddBookButton() {
-	titleContainer.classList.remove("hidden-background");
+	newBookButton.classList.remove("hidden-background");
 	bookContainer.classList.remove("hidden-background");
 	newBookContainer.classList.add("hidden-book");
 }
@@ -77,36 +97,39 @@ function addBook() {
 
 function appendBookToContainer(title, author, pages, hasRead) {
 	let bookDiv = document.createElement("div");
-	let bookTitle = document.createElement("h2");
-	let bookAuthor = document.createElement("h3");
-	let bookPages = document.createElement("h3");
-	let bookHasRead = document.createElement("input");
-	let bookHasReadH3 = document.createElement("h3");
-	let hasReadContainer = document.createElement("div");
+	let bookTitle = document.createElement("div");
+	let bookAuthor = document.createElement("div");
+	let bookPages = document.createElement("div");
+	let bookButtons = document.createElement("div");
+	let bookHasRead = document.createElement("button");
 	let removeButton = document.createElement("button");
 
-	bookHasRead.type = "checkbox";
-	bookHasRead.name = "read";
-	bookHasRead.value = "read";
-	bookHasRead.id = "read";
+	if (hasRead) {
+		bookHasRead.innerText = "Read";
+	}
+	if (!hasRead) {
+		bookHasRead.innerText = "Not Read";
+	}
 
 	removeButton.innerText = "Remove";
 	bookTitle.innerText = title;
 	bookAuthor.innerText = author;
 	bookPages.innerText = "Pages: " + pages;
-	bookHasReadH3.innerText = "Read?";
-	bookHasRead.checked = hasRead;
-	hasReadContainer.append(bookHasReadH3, bookHasRead, removeButton);
-	hasReadContainer.classList.add("read-container");
+	bookButtons.append(bookHasRead, removeButton);
+	bookTitle.classList.add("title");
 
-	bookDiv.append(bookTitle, bookAuthor, bookPages, hasReadContainer);
+	bookDiv.append(bookTitle, bookAuthor, bookPages, bookButtons);
 	bookDiv.classList.add("book");
 	bookArrayPos++;
-	removeButton.classList.add("remove-button");
+	removeButton.classList.add("remove");
+	removeButton.classList.add("book-button");
+	bookHasRead.classList.add("read");
+	bookHasRead.classList.add("book-button");
 	removeButton.setAttribute("data-key", bookArrayPos);
+	bookHasRead.setAttribute("data-read", bookArrayPos);
 	bookDiv.setAttribute("data-key", bookArrayPos);
 	return bookDiv;
 }
 
-const theHobbit = new Book("The Hobbit", "J.R.R. Tolkien", 295, false);
-console.log(theHobbit.info());
+//const theHobbit = new Book("The Hobbit", "J.R.R. Tolkien", 295, false);
+//console.log(theHobbit.info());

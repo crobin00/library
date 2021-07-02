@@ -8,22 +8,47 @@
 		<link rel="stylesheet" href="styles.css" />
 	</head>
 	<body>
-		<div class="title-container">
-			<h1>Welcome to your Book Shelf</h1>
-			<h3>Add a new book using the button below</h3>
-			<button class="new-button">+</button>
+		<div class="bg"></div>
+		<div class="header">
+			<button type="button" class="add-book-button">New Book</button>
 		</div>
 
-		<div class="book-container"></div>
+		<div class="book-container">
+			<!--
+			<div class="book">
+				<div class="title">Title</div>
+				<div class="author">Author</div>
+				<div class="page">Pages</div>
+				<div class="book-buttons">
+					<button class="book-button read">Read</button>
+					<button class="book-button remove">Remove</button>
+				</div>
+			</div>
+        --></div>
 
 		<div class="hidden-book new-book-container">
 			<form>
 				<label for="book-title">Book Title:</label><br />
-				<input type="text" id="book-title" name="book-title" /><br />
+				<input
+					type="text"
+					id="book-title"
+					name="book-title"
+					onfocus="this.value=''"
+				/><br />
 				<label for="author">Author:</label><br />
-				<input type="text" id="author" name="author" /><br />
+				<input
+					type="text"
+					id="author"
+					name="author"
+					onfocus="this.value=''"
+				/><br />
 				<label for="pages">Pages:</label>
-				<input type="number" id="pages" name="pages" /><br />
+				<input
+					type="number"
+					id="pages"
+					name="pages"
+					onfocus="this.value=''"
+				/><br />
 				<label for="hasRead">Read?</label>
 				<input
 					type="checkbox"
@@ -31,7 +56,9 @@
 					name="hasRead"
 					value="read"
 				/><br />
-				<button class="add-book-button" type="button">Add Book></button>
+				<button class="new-book-add-button" type="button">
+					Add Book
+				</button>
 			</form>
 		</div>
 		<script src="script.js"></script>
