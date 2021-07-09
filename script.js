@@ -1,143 +1,131 @@
-const background = document.querySelector("body");
-const hideNewBook = document.querySelector(".bg");
-const newBookButton = document.querySelector(".add-book-button");
-const newBookContainer = document.querySelector(".new-book-container");
-const bookContainer = document.querySelector(".book-container");
-const addBookButton = document.querySelector(".new-book-add-button");
-const addBookTitle = document.getElementById("book-title");
-const addBookAuthor = document.getElementById("author");
-const addBookPages = document.getElementById("pages");
-const addBookHasRead = document.getElementById("hasRead");
-let bookArray = [];
-newBookButton.addEventListener("click", newBook);
-addBookButton.addEventListener("click", addBook);
-let bookArrayPos = -1;
+// Book Class: Handle Books
+class Book {
+	constructor(title, author, pages, hasRead) {
+		this.title = title;
+		this.author = author;
+		this.pages = pages;
+		this.hasRead = hasRead;
+	}
+}
 
-const removeBookButton = document.querySelectorAll(".remove");
-document.body.addEventListener("click", function (e) {
+//Handle UI Class
+class UI {
+	static showNewBookDisplay() {
+		document
+			.querySelector(".book-container")
+			.classList.add("hidden-background");
+		document
+			.querySelector(".add-book-button")
+			.classList.add("hidden-background");
+		document
+			.querySelector(".new-book-container")
+
+			.classList.remove("hidden-book");
+	}
+
+	static disableNewBookButton() {
+		const newBookButton = document.querySelector(".add-book-button");
+		newBookButton.disabled = true;
+	}
+
+	static enableNewBookButton() {
+		const newBookButton = document.querySelector(".add-book-button");
+		newBookButton.disabled = false;
+	}
+
+	static hideNewBookDisplay() {
+		document
+			.querySelector(".book-container")
+			.classList.remove("hidden-background");
+		document
+			.querySelector(".add-book-button")
+			.classList.remove("hidden-background");
+		document
+			.querySelector(".new-book-container")
+
+			.classList.add("hidden-book");
+	}
+
+	static addBookToContainer(newBook) {
+		const div = document.createElement("div");
+		let hasReadText;
+		if (newBook.hasRead) {
+			hasReadText = "Read";
+		} else {
+			hasReadText = "Not Read";
+		}
+
+		div.innerHTML = `<div class="book">
+            <div class="title">${newBook.title}</div>
+            <div class="author">${newBook.author}</div>
+            <div class="page">Pages: ${newBook.pages}</div>
+            <div class="book-buttons">
+            <button class="book-button read">${hasReadText}</button>
+            <button class="book-button remove">Remove</button>
+            </div></div>
+            `;
+		document.querySelector(".book-container").appendChild(div);
+	}
+
+	static resetForms() {
+		document.getElementById("book-title").value = "";
+		document.getElementById("author").value = "";
+		document.getElementById("pages").value = "";
+		document.getElementById("hasRead").checked = false;
+	}
+
+	static closeOutOfForm() {
+		UI.hideNewBookDisplay();
+		UI.enableNewBookButton();
+	}
+}
+
+//Event New Book Button
+document.querySelector(".add-book-button").addEventListener("click", (e) => {
+	UI.showNewBookDisplay();
+	UI.disableNewBookButton();
+});
+
+//Event Add Book To List
+document
+	.querySelector(".new-book-add-button")
+	.addEventListener("click", (e) => {
+		const title = document.getElementById("book-title").value;
+		const author = document.getElementById("author").value;
+		const pages = document.getElementById("pages").value;
+		const hasRead = document.getElementById("hasRead").checked;
+		if (title == "" || author == "" || pages == "") {
+			alert("Please fill out all fields");
+			return;
+		}
+		const newBook = new Book(title, author, pages, hasRead);
+		UI.addBookToContainer(newBook);
+		//Reset form to empty
+		UI.resetForms();
+		UI.hideNewBookDisplay();
+		UI.enableNewBookButton();
+	});
+
+//Event Remove Book
+document.querySelector(".book-container").addEventListener("click", (e) => {
 	if (e.target.classList.contains("remove")) {
-		removeBook(e.target.getAttribute("data-key"));
+		e.target.parentElement.parentElement.remove();
 	}
 });
 
-hideNewBook.addEventListener("click", closeMenu);
-function closeMenu() {
-	newBookButton.classList.remove("hidden-background");
-	bookContainer.classList.remove("hidden-background");
-	newBookContainer.classList.add("hidden-book");
-}
-
-const readBook = document.querySelectorAll(".read");
-document.body.addEventListener("click", function (e) {
+//Event change read status
+document.querySelector(".book-container").addEventListener("click", (e) => {
 	if (e.target.classList.contains("read")) {
-		swapReadStatus(e.target.getAttribute("data-read"));
+		if (e.target.innerText == "Read") {
+			e.target.innerText = "Not Read";
+		} else {
+			e.target.innerText = "Read";
+		}
 	}
 });
 
-function Book(title, author, pages, hasRead) {
-	this.title = title;
-	this.author = author;
-	this.pages = pages;
-	this.hasRead = hasRead;
-	this.info = function () {
-		if (hasRead) return `${title} by ${author}, ${pages} pages, has read`;
-		if (!hasRead)
-			return `${title} by ${author}, ${pages} pages, has not read`;
-	};
-}
-
-function swapReadStatus(index) {
-	if (
-		bookContainer.querySelector(`[data-read="${index}"]`).innerText ==
-		"Read"
-	) {
-		//bookArray[index].hasRead = false;
-		bookContainer.querySelector(`[data-read="${index}"]`).innerText =
-			"Not Read";
-	} else {
-		//bookArray[index].hasRead = true;
-		bookContainer.querySelector(`[data-read="${index}"]`).innerText =
-			"Read";
-	}
-}
-
-function removeBook(index) {
-	bookContainer.querySelector(`[data-key="${index}"]`).remove();
-	bookArray.splice(index);
-}
-
-function newBook() {
-	newBookButton.classList.add("hidden-background");
-	bookContainer.classList.add("hidden-background");
-	newBookContainer.classList.remove("hidden-book");
-}
-
-function clickedAddBookButton() {
-	newBookButton.classList.remove("hidden-background");
-	bookContainer.classList.remove("hidden-background");
-	newBookContainer.classList.add("hidden-book");
-}
-
-function addBook() {
-	let readChecked;
-	if (addBookHasRead.checked) readChecked = true;
-	if (!addBookHasRead.checked) readChecked = false;
-
-	let newBook = new Book(
-		addBookTitle.value,
-		addBookAuthor.value,
-		addBookPages.value,
-		readChecked
-	);
-	bookArray.push(newBook);
-	console.log(bookArray);
-	bookContainer.appendChild(
-		appendBookToContainer(
-			newBook.title,
-			newBook.author,
-			newBook.pages,
-			newBook.hasRead
-		)
-	);
-
-	clickedAddBookButton();
-}
-
-function appendBookToContainer(title, author, pages, hasRead) {
-	let bookDiv = document.createElement("div");
-	let bookTitle = document.createElement("div");
-	let bookAuthor = document.createElement("div");
-	let bookPages = document.createElement("div");
-	let bookButtons = document.createElement("div");
-	let bookHasRead = document.createElement("button");
-	let removeButton = document.createElement("button");
-
-	if (hasRead) {
-		bookHasRead.innerText = "Read";
-	}
-	if (!hasRead) {
-		bookHasRead.innerText = "Not Read";
-	}
-
-	removeButton.innerText = "Remove";
-	bookTitle.innerText = title;
-	bookAuthor.innerText = author;
-	bookPages.innerText = "Pages: " + pages;
-	bookButtons.append(bookHasRead, removeButton);
-	bookTitle.classList.add("title");
-
-	bookDiv.append(bookTitle, bookAuthor, bookPages, bookButtons);
-	bookDiv.classList.add("book");
-	bookArrayPos++;
-	removeButton.classList.add("remove");
-	removeButton.classList.add("book-button");
-	bookHasRead.classList.add("read");
-	bookHasRead.classList.add("book-button");
-	removeButton.setAttribute("data-key", bookArrayPos);
-	bookHasRead.setAttribute("data-read", bookArrayPos);
-	bookDiv.setAttribute("data-key", bookArrayPos);
-	return bookDiv;
-}
-
-//const theHobbit = new Book("The Hobbit", "J.R.R. Tolkien", 295, false);
-//console.log(theHobbit.info());
+//Event close new book container on background click
+document.querySelector(".bg").addEventListener("click", (e) => {
+	UI.resetForms();
+	UI.closeOutOfForm();
+});
